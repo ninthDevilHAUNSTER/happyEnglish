@@ -72,8 +72,8 @@ def handle_excel_file(id):
                     file_source=excel,
                     en=row_value[0],
                     cn=row_value[1],
-                    cn2en=int(row_value[2]),
-                    word_or_sentence=int(row_value[3]),
+                    cn2en=int(row_value[2]) if row_value[2] != "" else 0,
+                    word_or_sentence=int(row_value[3]) if row_value[3] != "" else 1,
                     comment=row_value[4]
                 )
             return True, '数据传输成功'
@@ -96,8 +96,8 @@ def handle_excel_file(id):
                         file_source=excel,
                         en=row_value[0],
                         cn=row_value[1],
-                        cn2en=int(row_value[2]),
-                        word_or_sentence=int(row_value[3]),
+                        cn2en=int(row_value[2]) if row_value[2] != "" else 0,
+                        word_or_sentence=int(row_value[3]) if row_value[3] != "" else 1,
                         comment=row_value[4]
                     )
             return True, '数据传输成功'
