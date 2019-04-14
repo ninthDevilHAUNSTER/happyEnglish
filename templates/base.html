@@ -1,0 +1,51 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %} {% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css?family=Clicker+Script" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+{#<div class="jumbotron jumbotron-fluid" id="Bootstrap Jumbotron">#}
+{#    <h1 align="center"> 烧包背单词</h1>#}
+{#    <p align="center">大梦将荒，有客惶惶，局就盈樽，侃谈千魂</p>#}
+{#</div>#}
+<div class="container">
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'import' %}">Import Words</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'management' %}">Management</a></li>
+        <li class="breadcrumb-item"><a href="/admin">admin site</a></li>
+    </ul>
+    {#    <nav class="nav nav-pills nav-stacked justify-content-center">#}
+    {#        <a class="nav-link" href={% url 'home' %}>index</a>#}
+    {#        <a class="nav-link" href={% url 'import' %}>words import</a>#}
+    {#        <a class="nav-link" href={% url 'output' %}>words output</a>#}
+    {#        <a class="nav-link" href={% url 'management' %}>words management</a>#}
+    {#    </nav>#}
+</div>
+
+<div class="container">
+    {% block content %}
+    {% endblock %}
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    })
+</script>
+</body>
+</html>

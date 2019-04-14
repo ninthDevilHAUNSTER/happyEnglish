@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% block title %} Home {% endblock %}
+{% block content %}
+    {#    <form action="{% url 'home' %}" method="post">#}
+    {#        {% csrf_token %}#}
+    {#        <input type="text" placeholder="文件名称，时间" name="condition">#}
+    {#        <button type="submit" class=""> 查找</button>#}
+    {#    </form>#}
+    {#    <hr/>#}
+    <br><br>
+    <div class="jumbotron jumbotron-fluid" id="Bootstrap Jumbotron">
+        <h1 align="center"> 烧包今天背单词了嚒</h1>
+            {% if beilema %}
+        <h2 align="center">背啦！</h2>
+    {% else %}
+        <h2 align="center">没有！</h2>
+    {% endif %}
+
+{#        <p align="center">大梦将荒，有客惶惶，局就盈樽，侃谈千魂</p>#}
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% block title %} upload file {% endblock %}
+{% block content %}
+
+    {% if success %}
+        <script>
+            alert("{{ msg }}");
+        </script>
+    {% endif %}
+
+    {% if  failure %}
+        <script>
+            alert("{{ msg }}");
+        </script>
+    {% endif %}
+
+    {#    <p> 请按照这个格式制作excel 文件进行测试，因为列数相当于数据库中的列名称，多余的会被扔掉</p>#}
+    {#    <img src="https://fizblog.cn/media/uploads/2017/07/31/snip20170731_1.png" alt="">#}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons submit='OK' reset="Cancel" %}{% endbuttons %}
+    </form>
+
+{% endblock %}
+

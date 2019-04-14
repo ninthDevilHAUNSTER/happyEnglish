@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %} view-excel {% endblock %}
+{% block content %}
+
+
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>中文</th>
+            <th>英文</th>
+            <th>背诵时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for word in words %}
+            <tr>
+                <td scope="row">{{ word.cn }}</td>
+                <td>{{ word.en }}</td>
+                <td>{{ word.recite_time|date:'Y-m-d G:i:s' }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
