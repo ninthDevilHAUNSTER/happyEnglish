@@ -17,21 +17,39 @@ HEADER = r"""\documentclass[a4paper, 12pt]{article}
     \maketitle
 """
 
+WORD_START = """
+\\begin{flushleft}
+一. 单词部分
+\\end{flushleft}
+"""
+
 WORD_MIDDLE_WARE = """
 \\begin{multicols}{2}
 \\begin{flushleft}
-%s \ \ \ \ \\underline{\hspace{3cm}}
-\end{flushleft}
+%s.\ %s \ \ \ \ \\underline{\hspace{3cm}}
+\\end{flushleft}
 
 \\begin{flushleft}
-%s \ \ \ \ \\underline{\hspace{3cm}}
+%s.\ %s \ \ \ \ \\underline{\hspace{3cm}}
 \\end{flushleft}
 \\end{multicols}
 """
 
+WORD_MIDDLE_WARE_SINGLE_CASE = """
+\\begin{multicols}{2}
+\\begin{flushleft}
+%s.\ %s \ \ \ \ \\underline{\hspace{3cm}}
+\\end{flushleft}
+\\end{multicols}
+"""
+
+SENTENCE_START = """
+\\Large{二. 句子部分}
+"""
+
 SENTENCE_MIDDLE_WARE = """
 \\begin{flushleft}
-%s
+%s.\ %s
 
 \\underline{\\hspace{16cm}}
 \\end{flushleft}
@@ -45,6 +63,11 @@ TAIL = r"""
 def test_complie(words, sentences):
     words = ['delusion', 'grafication']
     sentence = ['In the word , two things are infinite , human\'s fool and universe, and I\'m sure what universe is .']
-    LATEX = HEADER + WORD_MIDDLE_WARE % (words[0], words[1]) + SENTENCE_MIDDLE_WARE % (sentence[0]) + TAIL
+    LATEX = HEADER + WORD_MIDDLE_WARE % ("1", words[0], "2", words[1]) + SENTENCE_MIDDLE_WARE % (
+        "1", sentence[0]) + TAIL
     open(TMP_LATEX_PATH + "\\tmp.tex", 'w', encoding="utf8").write(LATEX)
     os.system(PDF_LATEX_COMPILE_CMD)
+
+
+if __name__ == '__main__':
+    test_complie(1, 1)

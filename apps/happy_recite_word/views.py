@@ -1,6 +1,6 @@
 from django.shortcuts import render, render_to_response
 from django.shortcuts import HttpResponseRedirect, HttpResponse
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, FileResponse
 from datetime import datetime, timedelta
 from .form import UploadFileForm
 from happyEnglish.settings import MEDIA_ROOT
@@ -75,7 +75,7 @@ def word_output(request):
     return render(request, 'happy_recite_word/output.html')
 
 
-from random import randint
+from random import randint, shuffle
 
 
 def gen_words_list(request, id):
@@ -103,14 +103,15 @@ def gen_words_list(request, id):
             t_sentences.append((sentence.cn, sentence.en))
         elif sentence.cn2en == 2:
             t_sentences.append((sentence.en, sentence.en))
-
+    shuffle(t_words)
+    shuffle(t_sentences)
     f_name = compile(t_words, t_sentences)
     with open(f_name, 'rb') as pdfExtract:
         response = HttpResponse(pdfExtract.read(), content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(
             datetime.strftime(datetime.now(), '%y_%m_%d_%H_%M') + ".pdf"
         )
-        return response
+    return response
 
 
 def word_management(request):

@@ -2,6 +2,10 @@ from django.db import models
 from datetime import datetime
 import django.utils.timezone as timezone
 from django.core import validators
+from django.db.models.signals import pre_delete
+from django.dispatch.dispatcher import receiver
+from happyEnglish.settings import MEDIA_ROOT
+import os
 
 
 # Create your models here.
@@ -15,6 +19,13 @@ class ExcelStatus(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# 加入信号量机制，删除EXCEL 文件
+@receiver(pre_delete, sender=ExcelStatus)
+def ExcelStatus_delete(sender, instance, **kwargs):
+    # print(instance.xl_file.path)
+    os.remove(instance.xl_file.path)
 
 
 class Words(models.Model):
@@ -43,8 +54,3 @@ class Words(models.Model):
 
     def __str__(self):
         return self.en + '\t' + self.cn
-
-
-'''
-CREATE DATABASE `happyenglish` CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
-'''

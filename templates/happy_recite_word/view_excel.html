@@ -11,13 +11,15 @@
             <th>中文</th>
             <th>英文</th>
             <th>背诵时间</th>
+            <th>背诵次数</th>
         </tr>
         </thead>
         <tbody>
         {% for word in words %}
             <tr>
                 <td>
-                    <button type="button" class="btn btn-outline-info  text-dark" data-toggle="popover" data-trigger="focus"
+                    <button type="button" class="btn btn-outline-info  text-dark" data-toggle="popover"
+                            data-trigger="focus"
                             title=""
                             data-content="{{ word.comment }}"
                             data-original-title="备注">{{ word.cn }}
@@ -31,7 +33,9 @@
                 <td>
                     <button type="button" class="btn btn-outline-light text-dark active">{{ word.en }}</button>
                 </td>
-                <td>{{ word.recite_time|date:'Y-m-d G:i:s' }}</td>
+                <td>{{ word.recite_time|date:'Y-m-d G:i' }}</td>
+                <td>{{ word.recite_count }}</td>
+
             </tr>
         {% endfor %}
         </tbody>

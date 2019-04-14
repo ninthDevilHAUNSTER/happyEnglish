@@ -18,7 +18,7 @@
             <th>背诵时间</th>
             <th>背诵按钮</th>
             <th>删除按钮</th>
-            </tr>
+        </tr>
         </thead>
         <tbody>
         {% for file in files %}
@@ -28,7 +28,7 @@
                         {{ file.name }}</a>
                 </td>
                 <td>
-                    {{ file.recite_time|date:'Y-m-d G:i:s' }}
+                    {{ file.recite_time|date:'Y-m-d G:i' }}
                 </td>
                 <td>
                     <a href="{% url 'gen_words_list' id=file.id %}">
