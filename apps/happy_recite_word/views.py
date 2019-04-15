@@ -10,6 +10,9 @@ from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, F
 from tmp_latex.latex_compile import compile
+from django.views.decorators.csrf import csrf_exempt
+import os
+from random import randint, shuffle
 
 
 # Create your views here.
@@ -21,9 +24,11 @@ def bad_request(request):
     return render_to_response('500.html', status=500)
 
 
+@csrf_exempt
 def word_import(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
+        print(form.is_valid())
         if form.is_valid():
             file = request.FILES['xl_file']
             new_file = form.save()
@@ -33,7 +38,6 @@ def word_import(request):
             id = ExcelStatus.objects.filter(name=file.name)[0].id
             try:
                 success_or_fail, msg = handle_excel_file(id)
-                print(msg)
                 if success_or_fail:
                     return render(request, 'happy_recite_word/import.html',
                                   {'form': form, 'success': True, 'msg': msg})
@@ -56,7 +60,7 @@ def del_excel_file(request, id):
     if request.method == "GET" and id is not None:
         Words.objects.filter(file_source_id=id).delete()
         ExcelStatus.objects.filter(id=id).delete()
-        return HttpResponseRedirect(reverse('home'))
+        return HttpResponseRedirect(reverse('management'))
     else:
         return render_to_response('500.html', status=500)
 
@@ -71,11 +75,18 @@ def view_excel(request, id):
         return render_to_response('500.html', status=500)
 
 
-def word_output(request):
-    return render(request, 'happy_recite_word/output.html')
-
-
-from random import randint, shuffle
+def word_output(request, id):
+    e = ExcelStatus.objects.filter(Q(pdf_file="None") & Q(id=id))
+    if e.__len__() == 1:
+        return HttpResponseRedirect(reverse('management'))
+    else:
+        e = ExcelStatus.objects.filter(id=id)
+        with open(e[0].pdf_file.path, 'rb') as pdfExtract:
+            response = HttpResponse(pdfExtract.read(), content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(
+                datetime.strftime(datetime.now(), '%y_%m_%d_%H_%M') + ".pdf"
+            )
+        return response
 
 
 def gen_words_list(request, id):
@@ -106,7 +117,17 @@ def gen_words_list(request, id):
     shuffle(t_words)
     shuffle(t_sentences)
     f_name = compile(t_words, t_sentences)
-    with open(f_name, 'rb') as pdfExtract:
+
+    e = ExcelStatus.objects.filter(Q(pdf_file="None") & Q(id=id))
+    if e.__len__() == 1:
+        pass
+    else:
+        if os.path.exists(e[0].pdf_file.path):
+            os.remove(e[0].pdf_file.path)
+
+    ExcelStatus.objects.filter(id=id).update(pdf_file="pdfs\\" + f_name)
+
+    with open(MEDIA_ROOT + "\\pdfs\\" + f_name, 'rb') as pdfExtract:
         response = HttpResponse(pdfExtract.read(), content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(
             datetime.strftime(datetime.now(), '%y_%m_%d_%H_%M') + ".pdf"

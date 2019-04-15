@@ -29,7 +29,7 @@ def compile(words, sentences):
     os.system(PDF_LATEX_COMPILE_CMD)
     os.remove('tmp.aux')
     os.remove('tmp.log')
-    save_path = settings.MEDIA_ROOT + "\\" + datetime.strftime(datetime.now(), '%y_%m_%d_%H_%M')
-    f_name = "{}.pdf".format(save_path)
-    shutil.move('tmp.pdf', "{}".format(f_name))
+    save_path = settings.MEDIA_ROOT + "\\pdfs\\"
+    f_name = datetime.strftime(datetime.now(), '%y_%m_%d_%H_%M') + ".pdf"
+    shutil.move('tmp.pdf', "{}".format(save_path + f_name))
     return f_name

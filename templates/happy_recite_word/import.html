@@ -2,7 +2,9 @@
 {% load bootstrap4 %}
 {% block title %} upload file {% endblock %}
 {% block content %}
-
+    <script src={{ STATIC_URL }}
+                    "/static/js/dropzone.js"></script>
+    <link rel="stylesheet" href={{ STATIC_URL }} "/static/css/dropzone.css" type="text/css"/>
     {% if success %}
         <script>
             alert("{{ msg }}");
@@ -17,11 +19,38 @@
 
     {#    <p> 请按照这个格式制作excel 文件进行测试，因为列数相当于数据库中的列名称，多余的会被扔掉</p>#}
     {#    <img src="https://fizblog.cn/media/uploads/2017/07/31/snip20170731_1.png" alt="">#}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {% bootstrap_form form %}
-        {% buttons submit='OK' reset="Cancel" %}{% endbuttons %}
-    </form>
+    <div class="row">
+        <div class="col-md-2">&nbsp;</div>
+        <div class="col-md-6">
+            <form id="myAwesomeDropzone" action="{{ request.path }}" class="dropzone" method="POST"
+                  enctype="multipart/form-data"></form>
+            {#    //这段代码是展示dropzone.js的精髓,class一定要是dropzone，id可以自定义#}
+            <script type="text/javascript">
+                //第二种配置，这种使用的是div做上传区域时使用的配置
+                Dropzone.autoDiscover = false;//不知道该行有什么用，欢迎高手下方评论解答
+                $("#myAwesomeDropzone").dropzone({
+                    url: "{{ request.path }}",//文件提交地址
+                    method: "post",  //也可用put
+                    paramName: "xl_file", //默认为file
+                    maxFiles: 1,//一次性上传的文件数量上限
+                    maxFilesize: 2, //文件大小，单位：MB
+                    acceptedFiles: ".csv,.xlsx", //上传的类型
+                    addRemoveLinks: true,
+                    parallelUploads: 1,//一次上传的文件数量
+                    dictDefaultMessage: '拖拽数据文件到这里上传',
+                    dictMaxFilesExceeded: "您最多只能上传1个文件！",
+                    dictResponseError: '文件上传失败!',
+                    dictInvalidFileType: "文件类型只能是.csv,.xlsx",
+                    dictFallbackMessage: "浏览器不受支持",
+                    dictFileTooBig: "文件过大上传文件最大支持.",
+                    dictRemoveLinks: "删除",
+                    dictCancelUpload: "取消",
+                });
+            </script>
+        </div>
+        <div class="col-md-2">&nbsp;</div>
+    </div>
+
 
 {% endblock %}
 

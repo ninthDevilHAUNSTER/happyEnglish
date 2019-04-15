@@ -16,6 +16,9 @@ class ExcelStatus(models.Model):
         validators.FileExtensionValidator(['xlsx', 'csv'])
     ], verbose_name="EXCEL 文件")
     recite_time = models.DateTimeField(default=datetime(2000, 1, 1, 1, 1, 1, 1), verbose_name="背诵日期")
+    pdf_file = models.FileField(upload_to="pdfs/", validators=[
+        validators.FileExtensionValidator(['pdf'])
+    ], null=False, default="None")
 
     def __str__(self):
         return self.name
@@ -24,9 +27,10 @@ class ExcelStatus(models.Model):
 # 加入信号量机制，删除EXCEL 文件
 @receiver(pre_delete, sender=ExcelStatus)
 def ExcelStatus_delete(sender, instance, **kwargs):
-    # print(instance.xl_file.path)
-    os.remove(instance.xl_file.path)
-
+    if os.path.exists(instance.xl_file.path):
+        os.remove(instance.xl_file.path)
+    if os.path.exists(instance.pdf_file.path):
+        os.remove(instance.pdf_file.path)
 
 class Words(models.Model):
     CN_TO_EN = (

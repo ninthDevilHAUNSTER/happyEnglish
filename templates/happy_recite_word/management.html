@@ -4,19 +4,20 @@
 {% endblock %}
 {% block content %}
 
-    {#    {% if  alert_msg %}#}
-    {#        <div class="alert alert-primary alert-dismissable fade show">#}
-    {#            <button type="button" class="close" data-dismiss="alert">×</button>#}
-    {#            <strong>注意!</strong> {{ alert_msg }}#}
-    {#        </div>#}
-    {#    {% endif %}#}
+    {% if  alert_msg %}
+        <div class="alert alert-primary alert-dismissable fade show">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <strong>注意!</strong> {{ alert_msg }}
+        </div>
+    {% endif %}
 
     <table class="table">
         <thead>
         <tr>
             <th>文件名</th>
             <th>背诵时间</th>
-            <th>背诵按钮</th>
+            <th>生成单词本</th>
+            <th>下载单词本</th>
             <th>删除按钮</th>
         </tr>
         </thead>
@@ -32,9 +33,20 @@
                 </td>
                 <td>
                     <a href="{% url 'gen_words_list' id=file.id %}">
-                        <button type="button" class="btn btn-info btn-sm">背诵
+                        <button type="button" class="btn btn-primary btn-sm">生成
                         </button>
                     </a>
+                </td>
+                <td>
+                    {% if file.pdf_file.name == "None" %}
+                            <button type="button" class="btn btn-info btn-sm disabled">下载
+                            </button>
+                    {% else %}
+                        <a href="{% url 'output' id=file.id %}">
+                            <button type="button" class="btn btn-info btn-sm">下载
+                            </button>
+                        </a>
+                    {% endif %}
                 </td>
                 <td>
                     <a href="{% url 'delete_excel' id=file.id %}">
