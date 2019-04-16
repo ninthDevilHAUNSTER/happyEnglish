@@ -31,12 +31,13 @@ urlpatterns = [
                   path('admin/', xadmin.site.urls, name="admin"),
                   path('', views.index, name="home"),
                   path('import/', views.word_import, name="import"),
-                  path('output/<int:id>', views.word_output, name="output"),
+                  path('api/word_output/<int:id>', views.word_output, name="word_output"),
                   path('gen_words_list/<int:id>', views.gen_words_list, name='gen_words_list'),
                   path('management/', views.word_management, name="management"),
-                  path('delete_excel/<int:id>', views.del_excel_file, name="delete_excel"),
-                  path('view_excel/<int:id>', views.view_excel, name='view_excel'),
-                  path('enshrine_word/', views.enshrine_word, name='enshrine_word')
+                  path('api/delete_excel/<int:id>', views.del_excel_file, name="delete_excel"),
+                  path('api/view_excel/<int:id>', views.view_excel, name='view_excel'),
+                  path('enshrine_word/', views.enshrine_word, name='enshrine_word'),
+                  path('api/ans_output/<int:id>', views.output_ans, name='ans_output')
                   # path('update_time/<int:id>',views.update_time,name='update_time')
               ] \
               + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

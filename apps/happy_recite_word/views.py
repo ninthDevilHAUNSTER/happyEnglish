@@ -9,7 +9,7 @@ from db_tools.words_input import handle_excel_file
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, F
-from tmp_latex.latex_compile import compile
+from tmp_latex.latex_compile import compile_answers, compile_words
 from django.views.decorators.csrf import csrf_exempt
 import os
 from random import randint, shuffle
@@ -76,15 +76,27 @@ def view_excel(request, id):
 
 
 def word_output(request, id):
-    e = ExcelStatus.objects.filter(Q(pdf_file="None") & Q(id=id))
-    if e.__len__() == 1:
+    e = ExcelStatus.objects.filter(id=id)[0]
+    if e.pdf_file.name == "None":
         return HttpResponseRedirect(reverse('management'))
     else:
-        e = ExcelStatus.objects.filter(id=id)
-        with open(e[0].pdf_file.path, 'rb') as pdfExtract:
+        with open(e.pdf_file.path, 'rb') as pdfExtract:
             response = HttpResponse(pdfExtract.read(), content_type='application/pdf')
             response['Content-Disposition'] = 'attachment; filename="{}"'.format(
-                datetime.strftime(datetime.now(), '%y_%m_%d_%H_%M') + ".pdf"
+                datetime.strftime(datetime.now(), 'words_%y_%m_%d_%H_%M') + ".pdf"
+            )
+        return response
+
+
+def output_ans(request, id):
+    e = ExcelStatus.objects.filter(id=id)[0]
+    if e.ans_file.name == "None":
+        return HttpResponseRedirect(reverse('management'))
+    else:
+        with open(e.ans_file.path, 'rb') as pdfExtract:
+            response = HttpResponse(pdfExtract.read(), content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(
+                datetime.strftime(datetime.now(), 'ans_%y_%m_%d_%H_%M') + ".pdf"
             )
         return response
 
@@ -92,13 +104,32 @@ def word_output(request, id):
 def enshrine_word(request):
     if request.GET['id'].isnumeric():
         id = int(request.GET['id'])
-        w = Words.objects.filter(id=id)
-        w.update(enshrine_time=w[0].enshrine_time + 1)
-        return HttpResponse("success", content_type="javascript/json")
+        try:
+            w = Words.objects.filter(id=id)
+            w.update(enshrine_time=w[0].enshrine_time + 1)
+            return HttpResponse("success", content_type="javascript/json")
+        except:
+            return HttpResponse("fail", content_type="javascript/json")
+    else:
+        return HttpResponse("fail", content_type="javascript/json")
 
 
 def gen_words_list(request, id):
-    ExcelStatus.objects.filter(id=id).update(recite_time=datetime.now())
+    e = ExcelStatus.objects.filter(id=id)
+    if e.__len__() == 0:
+        return render_to_response('500.html', status=500)
+
+    pdf_file = e[0].pdf_file
+    if pdf_file.name != "None":
+        if os.path.exists(pdf_file.path):
+            os.remove(pdf_file.path)
+    ans_file = e[0].ans_file
+    if ans_file.name != 'None':
+        if os.path.exists(ans_file.path):
+            os.remove(ans_file.path)
+            print("[*] REMOVE")
+
+    e.update(recite_time=datetime.now())
     words = Words.objects.filter(file_source_id=id, word_or_sentence=1)
     sentences = Words.objects.filter(file_source_id=id, word_or_sentence=2)
 
@@ -124,16 +155,12 @@ def gen_words_list(request, id):
             t_sentences.append((sentence.en, sentence.en))
     shuffle(t_words)
     shuffle(t_sentences)
-    f_name = compile(t_words, t_sentences)
 
-    e = ExcelStatus.objects.filter(Q(pdf_file="None") & Q(id=id))
-    if e.__len__() == 1:
-        pass
-    else:
-        if os.path.exists(e[0].pdf_file.path):
-            os.remove(e[0].pdf_file.path)
+    f_name = compile_words(t_words, t_sentences)
+    a_name = compile_answers(t_words, t_sentences)
 
-    ExcelStatus.objects.filter(id=id).update(pdf_file="pdfs\\" + f_name)
+    e.update(pdf_file="pdfs\\" + f_name)
+    e.update(ans_file="pdfs\\" + a_name)
 
     with open(MEDIA_ROOT + "\\pdfs\\" + f_name, 'rb') as pdfExtract:
         response = HttpResponse(pdfExtract.read(), content_type='application/pdf')
@@ -141,7 +168,6 @@ def gen_words_list(request, id):
             datetime.strftime(datetime.now(), '%y_%m_%d_%H_%M') + ".pdf"
         )
     return response
-
 
 def word_management(request):
     full_files = ExcelStatus.objects.all()

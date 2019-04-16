@@ -1,7 +1,7 @@
 import os
 
 TMP_LATEX_PATH = r"D:\python_box\happyEnglish\apps\tmp_latex"
-PDF_LATEX_COMPILE_CMD = "pdflatex {}".format(TMP_LATEX_PATH + "\\tmp.tex")
+PDF_LATEX_COMPILE_CMD = "pdflatex {} >nul".format(TMP_LATEX_PATH + "\\tmp.tex")
 
 HEADER = r"""\documentclass[a4paper, 12pt]{article}
 \usepackage[UTF8]{ctex}
@@ -44,7 +44,9 @@ WORD_MIDDLE_WARE_SINGLE_CASE = """
 """
 
 SENTENCE_START = """
-\\Large{二. 句子部分}
+\\begin{flushleft}
+二. 句子部分
+\\end{flushleft}
 """
 
 SENTENCE_MIDDLE_WARE = """
