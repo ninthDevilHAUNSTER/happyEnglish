@@ -39,10 +39,14 @@
                 </td>
                 <td>
                     {% if file.pdf_file.name == "None" %}
-                            <button type="button" class="btn btn-info btn-sm disabled">下载
-                            </button>
+                        <button type="button" class="btn btn-info btn-sm disabled">下载
+                        </button>
                     {% else %}
-                        <a href="{% url 'output' id=file.id %}">
+                        {#  这么写只是为了方便自己能够直接在chrome 里面打开pdf文件 #}
+                        {#  当debug == false 的时候，配置的函数会失效 #}
+                        {#  日后如果部署生产环境 请注释下行并改为#}
+                        {#  <a href={% url 'output' id = file.id %}#}
+                        <a href="/media/{{ file.pdf_file }}">
                             <button type="button" class="btn btn-info btn-sm">下载
                             </button>
                         </a>
@@ -112,7 +116,5 @@
             {% endif %}
         </ul>
     </nav>
-    {#    {% endif %}#}
-
 
 {% endblock %}

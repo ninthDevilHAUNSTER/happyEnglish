@@ -32,6 +32,7 @@ def ExcelStatus_delete(sender, instance, **kwargs):
     if os.path.exists(instance.pdf_file.path):
         os.remove(instance.pdf_file.path)
 
+
 class Words(models.Model):
     CN_TO_EN = (
         (1, "CN2EN"),
@@ -46,14 +47,16 @@ class Words(models.Model):
                           help_text="en : 请在此输入英文")
     cn = models.CharField(max_length=200, null=False, blank=False, default=" ", verbose_name="中文",
                           help_text="cn : 请在此输入中文")
-    comment = models.TextField(max_length=255, null=False, default="", verbose_name="备注", help_text="comment : 请在此输入备注")
+    comment = models.TextField(max_length=255, null=False, default=" ", verbose_name="备注",
+                               help_text="comment : 请在此输入备注")
     add_time = models.DateTimeField(default=timezone.now, verbose_name="创建日期")
-    recite_time = models.DateTimeField(default=timezone.now, verbose_name="背诵日期")
-    recite_count = models.IntegerField(default=1, verbose_name="背诵次数")
+    recite_time = models.DateTimeField(default=datetime(2000, 1, 1, 1, 1, 1, 1), verbose_name="背诵日期")
+    recite_count = models.IntegerField(default=0, verbose_name="背诵次数")
     cn2en = models.SmallIntegerField(choices=CN_TO_EN, default=0, verbose_name="中翻英",
                                      help_text="cn2en : 1 代表中翻英，2代表英翻中，0（默认）代表都可以，系统会取随机数")
     word_or_sentence = models.SmallIntegerField(choices=WorS, default=1, verbose_name="单词还是句子",
                                                 help_text="WorS(word_or_sentence) : 1(默认) 代表单词; 2 代表句子")
+    enshrine_time = models.IntegerField(default=0, verbose_name="收藏次数", help_text="收藏一次单词,该数量自增1")
     file_source = models.ForeignKey(ExcelStatus, on_delete=models.DO_NOTHING, verbose_name="所属EXCEL文件")
 
     def __str__(self):

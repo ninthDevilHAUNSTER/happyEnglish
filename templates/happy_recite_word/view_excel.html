@@ -10,7 +10,7 @@
         <tr>
             <th>中文</th>
             <th>英文</th>
-            <th>背诵时间</th>
+            <th>收藏次数</th>
             <th>背诵次数</th>
         </tr>
         </thead>
@@ -33,7 +33,23 @@
                 <td>
                     <button type="button" class="btn btn-outline-light text-dark active">{{ word.en }}</button>
                 </td>
-                <td>{{ word.recite_time|date:'Y-m-d G:i' }}</td>
+                <td>{{ word.enshrine_time }} &nbsp;&nbsp;&nbsp;&nbsp;
+                    <button id="{{ word.id }}" class="icon-star"
+                            style="color: darkorange;border: none;background-color: white;"
+                            onclick="enshrine(this)"></button>
+                    <script>
+                        function enshrine(data) {
+                            $.ajax({
+                                url: "/enshrine_word/",
+                                data: {'id': data.id},
+                                success: function (data) {
+                                    alert(data["info"]);
+                                }
+                            })
+                        }
+                    </script>
+
+                </td>
                 <td>{{ word.recite_count }}</td>
 
             </tr>

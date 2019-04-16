@@ -33,17 +33,6 @@ mysql 5.6
 
 关于 excel 或者 csv 的格式请参考 `xls\`目录下的`template.csv`和`template.xlsx`
 
-### TODO LIST
-
-- [x] django 信号量机制 删除多余的EXCEL 文件
-- [x] Latex 文本序号
-- [ ] 单词收藏按钮
-- [ ] 单词/单词本搜索按钮
-- [ ] Latex 答案纸
-- [x] 默写单词乱序
-- [x] 拖动放入 excel
-- [ ] PDF 文件入库
-
 **暂时不考虑加入的内容**
 
 - [ ] 多用户

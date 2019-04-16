@@ -24,18 +24,23 @@ from xadmin.plugins import xversion
 xversion.register_models()
 
 from happy_recite_word import views
+from django.conf.urls.static import static
+from happyEnglish import settings
 
 urlpatterns = [
-    path('admin/', xadmin.site.urls, name="admin"),
-    path('', views.index, name="home"),
-    path('import/', views.word_import, name="import"),
-    path('output/<int:id>', views.word_output, name="output"),
-    path('gen_words_list/<int:id>', views.gen_words_list, name='gen_words_list'),
-    path('management/', views.word_management, name="management"),
-    path('delete_excel/<int:id>', views.del_excel_file, name="delete_excel"),
-    path('view_excel/<int:id>', views.view_excel, name='view_excel'),
-    # path('update_time/<int:id>',views.update_time,name='update_time')
-]
+                  path('admin/', xadmin.site.urls, name="admin"),
+                  path('', views.index, name="home"),
+                  path('import/', views.word_import, name="import"),
+                  path('output/<int:id>', views.word_output, name="output"),
+                  path('gen_words_list/<int:id>', views.gen_words_list, name='gen_words_list'),
+                  path('management/', views.word_management, name="management"),
+                  path('delete_excel/<int:id>', views.del_excel_file, name="delete_excel"),
+                  path('view_excel/<int:id>', views.view_excel, name='view_excel'),
+                  path('enshrine_word/', views.enshrine_word, name='enshrine_word')
+                  # path('update_time/<int:id>',views.update_time,name='update_time')
+              ] \
+              + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# 如果部署生产环境请注释上行
 
 handler404 = views.page_not_found
 handler500 = views.bad_request

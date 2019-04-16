@@ -89,6 +89,14 @@ def word_output(request, id):
         return response
 
 
+def enshrine_word(request):
+    if request.GET['id'].isnumeric():
+        id = int(request.GET['id'])
+        w = Words.objects.filter(id=id)
+        w.update(enshrine_time=w[0].enshrine_time + 1)
+        return HttpResponse("success", content_type="javascript/json")
+
+
 def gen_words_list(request, id):
     ExcelStatus.objects.filter(id=id).update(recite_time=datetime.now())
     words = Words.objects.filter(file_source_id=id, word_or_sentence=1)
