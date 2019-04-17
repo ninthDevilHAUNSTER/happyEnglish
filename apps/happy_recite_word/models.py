@@ -5,6 +5,7 @@ from django.core import validators
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 from happyEnglish.settings import MEDIA_ROOT
+from users.models import UserProfile
 import os
 
 
@@ -22,6 +23,7 @@ class ExcelStatus(models.Model):
     ans_file = models.FileField(upload_to="pdfs/", validators=[
         validators.FileExtensionValidator(['pdf'])
     ], null=False, default="None", help_text="答案本")
+    owner = models.ForeignKey(UserProfile, on_delete=models.DO_NOTHING, related_name="owner", verbose_name="所有者")
 
     def __str__(self):
         return self.name
@@ -30,7 +32,7 @@ class ExcelStatus(models.Model):
 # 加入信号量机制，删除EXCEL 文件
 @receiver(pre_delete, sender=ExcelStatus)
 def ExcelStatus_delete(sender, instance, **kwargs):
-    print("[*] Deleting signal")
+    # print("[*] Deleting signal")
     if os.path.exists(instance.xl_file.path):
         os.remove(instance.xl_file.path)
     if os.path.exists(instance.pdf_file.path):
@@ -63,7 +65,8 @@ class Words(models.Model):
     word_or_sentence = models.SmallIntegerField(choices=WorS, default=1, verbose_name="单词还是句子",
                                                 help_text="WorS(word_or_sentence) : 1(默认) 代表单词; 2 代表句子")
     enshrine_time = models.IntegerField(default=0, verbose_name="收藏次数", help_text="收藏一次单词,该数量自增1")
-    file_source = models.ForeignKey(ExcelStatus, on_delete=models.DO_NOTHING, verbose_name="所属EXCEL文件")
+    file_source = models.ForeignKey(ExcelStatus, on_delete=models.DO_NOTHING, verbose_name="所属EXCEL文件",
+                                    related_name="source")
 
     def __str__(self):
         return self.en + '\t' + self.cn

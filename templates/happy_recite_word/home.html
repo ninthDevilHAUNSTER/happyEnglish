@@ -10,16 +10,19 @@
     {#    </form>#}
     {#    <hr/>#}
     <br><br>
-    <div class="jumbotron jumbotron-fluid" id="Bootstrap Jumbotron">
-        <h1 align="center"> 烧包今天背单词了嚒</h1>
+    {% if request.user.is_authenticated %}
+        <div class="jumbotron jumbotron-fluid" id="Bootstrap Jumbotron" style="background-color: #e3f2fd;">
+            <h1 align="center"> {{ request.user }} 今天背单词了嚒</h1>
             {% if beilema %}
-        <h2 align="center">背啦！</h2>
+                <h2 align="center">背啦！</h2>
+            {% else %}
+                <h2 align="center">没有！</h2>
+            {% endif %}
+        </div>
     {% else %}
-        <h2 align="center">没有！</h2>
+        <div class="jumbotron jumbotron-fluid" id="Bootstrap Jumbotron" style="background-color: #e3f2fd;">
+            <h1 align="center"> 你今天背单词了嚒</h1>
+            <h2 align="center"> 想要使用功能 可以登陆或者注册</h2>
+        </div>
     {% endif %}
-
-{#        <p align="center">大梦将荒，有客惶惶，局就盈樽，侃谈千魂</p>#}
-    </div>
-
-
 {% endblock %}

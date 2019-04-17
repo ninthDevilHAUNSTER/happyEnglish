@@ -20,7 +20,7 @@ xlwt                 1.3.0
 **其他配置**
 
 ```latex
-latex {pdflatex}
+latex - pdflatex
 mysql 5.6
 ```
 
@@ -33,6 +33,6 @@ mysql 5.6
 
 关于 excel 或者 csv 的格式请参考 `xls\`目录下的`template.csv`和`template.xlsx`
 
-**暂时不考虑加入的内容**
+### 配置 相关
 
-- [ ] 多用户
+推荐使用chrome PDF.js 插件。快乐背单词，从今天开始！

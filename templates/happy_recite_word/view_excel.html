@@ -2,8 +2,22 @@
 
 {% block title %} view-excel {% endblock %}
 {% block content %}
-
-
+    <script>
+        function enshrine(data) {
+            $.ajax({
+                url: "/enshrine_word/",
+                data: {'id': data.id},
+                success: function (data) {
+                    {#alert(data["info"]);#}
+                    if (data["info"] === "success") {
+                        {#alert(data["info"]);#}
+                    } else if (data["info"] === "fail") {
+                        alert("what are u doing")
+                    }
+                }
+            })
+        }
+    </script>
 
     <table class="table">
         <thead>
@@ -33,22 +47,10 @@
                 <td>
                     <button type="button" class="btn btn-outline-light text-dark active">{{ word.en }}</button>
                 </td>
-                <td>{{ word.enshrine_time }} &nbsp;&nbsp;&nbsp;&nbsp;
+                <td><a id="enshrine_time_{{ word.id }}">{{ word.enshrine_time }}</a>
                     <button id="{{ word.id }}" class="icon-star"
                             style="color: darkorange;border: none;background-color: white;"
                             onclick="enshrine(this)"></button>
-                    <script>
-                        function enshrine(data) {
-                            $.ajax({
-                                url: "/enshrine_word/",
-                                data: {'id': data.id},
-                                success: function (data) {
-                                    alert(data["info"]);
-                                }
-                            })
-                        }
-                    </script>
-
                 </td>
                 <td>{{ word.recite_count }}</td>
 

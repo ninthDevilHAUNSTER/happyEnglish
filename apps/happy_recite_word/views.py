@@ -2,7 +2,7 @@ from django.shortcuts import render, render_to_response
 from django.shortcuts import HttpResponseRedirect, HttpResponse
 from django.http import HttpResponseBadRequest, FileResponse
 from datetime import datetime, timedelta
-from .form import UploadFileForm
+from .forms import UploadFileForm
 from happyEnglish.settings import MEDIA_ROOT
 from .models import ExcelStatus, Words
 from db_tools.words_input import handle_excel_file
@@ -13,29 +13,22 @@ from tmp_latex.latex_compile import compile_answers, compile_words
 from django.views.decorators.csrf import csrf_exempt
 import os
 from random import randint, shuffle
-
-
-# Create your views here.
-def page_not_found(request):
-    return render_to_response('404.html', status=404)
-
-
-def bad_request(request):
-    return render_to_response('500.html', status=500)
+from django.contrib.auth.decorators import login_required
 
 
 @csrf_exempt
+@login_required
 def word_import(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
-        print(form.is_valid())
         if form.is_valid():
             file = request.FILES['xl_file']
-            new_file = form.save()
-            # 名称是否重复
+            # use commit = False 来自定义user
+            new_file = form.save(commit=False)
             new_file.name = file.name
+            new_file.owner = request.user
             new_file.save()
-            id = ExcelStatus.objects.filter(name=file.name)[0].id
+            id = ExcelStatus.objects.filter(name=file.name, owner=request.user)[0].id
             try:
                 success_or_fail, msg = handle_excel_file(id)
                 if success_or_fail:
@@ -56,6 +49,7 @@ def word_import(request):
     return render(request, 'happy_recite_word/import.html', {'form': form})
 
 
+@login_required
 def del_excel_file(request, id):
     if request.method == "GET" and id is not None:
         Words.objects.filter(file_source_id=id).delete()
@@ -64,7 +58,7 @@ def del_excel_file(request, id):
     else:
         return render_to_response('500.html', status=500)
 
-
+@login_required
 def view_excel(request, id):
     if request.method == "GET" and id is not None:
         word_list = [i for i in Words.objects.filter(file_source_id=id)]
@@ -75,6 +69,7 @@ def view_excel(request, id):
         return render_to_response('500.html', status=500)
 
 
+@login_required
 def word_output(request, id):
     e = ExcelStatus.objects.filter(id=id)[0]
     if e.pdf_file.name == "None":
@@ -88,6 +83,7 @@ def word_output(request, id):
         return response
 
 
+@login_required
 def output_ans(request, id):
     e = ExcelStatus.objects.filter(id=id)[0]
     if e.ans_file.name == "None":
@@ -101,19 +97,30 @@ def output_ans(request, id):
         return response
 
 
+import json
+
+
+@login_required
 def enshrine_word(request):
     if request.GET['id'].isnumeric():
         id = int(request.GET['id'])
         try:
             w = Words.objects.filter(id=id)
             w.update(enshrine_time=w[0].enshrine_time + 1)
-            return HttpResponse("success", content_type="javascript/json")
+            return HttpResponse(json.dumps(
+                {'info': 'success'}
+            ), content_type="javascript/json")
         except:
-            return HttpResponse("fail", content_type="javascript/json")
+            return HttpResponse(json.dumps(
+                {'info': 'fail'}
+            ), content_type="javascript/json")
     else:
-        return HttpResponse("fail", content_type="javascript/json")
+        return HttpResponse(json.dumps(
+            {'info': 'fail'}
+        ), content_type="javascript/json")
 
 
+@login_required
 def gen_words_list(request, id):
     e = ExcelStatus.objects.filter(id=id)
     if e.__len__() == 0:
@@ -169,8 +176,10 @@ def gen_words_list(request, id):
         )
     return response
 
+
+@login_required
 def word_management(request):
-    full_files = ExcelStatus.objects.all()
+    full_files = ExcelStatus.objects.filter(owner=request.user).order_by('id')
     paginator = Paginator(full_files, 5)
     page = request.GET.get('page')
     files = paginator.get_page(page)
@@ -180,9 +189,13 @@ def word_management(request):
 def index(request):
     # get datetime
     # SELECT ID FROM EXCELES WHERE RECITE_TIME< NOW() AND RECITE_TIME > NOW() - 24 hours
-    ls = ExcelStatus.objects.filter(
-        Q(recite_time__lt=datetime.now()) & Q(recite_time__gt=datetime.now() - timedelta(hours=24)))
-    if ls.__len__() >= 1:
-        return render(request, 'happy_recite_word/home.html', {'beilema': True})
+    if request.user.is_authenticated:
+        ls = ExcelStatus.objects.filter(Q(owner=request.user) &
+                                        Q(recite_time__lt=datetime.now()) & Q(
+            recite_time__gt=datetime.now() - timedelta(hours=24)))
+        if ls.__len__() >= 1:
+            return render(request, 'happy_recite_word/home.html', {'beilema': True})
+        else:
+            return render(request, 'happy_recite_word/home.html', {'beilema': False})
     else:
-        return render(request, 'happy_recite_word/home.html', {'beilema': False})
+        return render(request, 'happy_recite_word/home.html')

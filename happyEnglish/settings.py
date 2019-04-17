@@ -30,6 +30,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'users.UserProfile'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users.apps.UsersConfig',
     'happy_recite_word.apps.HappyReciteWordConfig',
     'xadmin',
     'crispy_forms',
@@ -69,6 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.media',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -126,6 +130,10 @@ USE_TZ = False  # 默认是Ture，时间是utc时间，由于我们要用本地�
 
 STATIC_URL = '/static/'
 
+LOGOUT_REDIRECT_URL = "/user/logout/"
+LOGIN_URL = "/user/login/"
+LOGIN_REDIRECT_URL = "/user/login/"
+
 MEDIA_URL = "/media/"
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
@@ -135,4 +143,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 WORDS_ROOT = "D:\\python_box\\shaobaobaoer_note\\english\\words\\"
 EXCEL_START_ROW_TITLE = ["en", "cn", "cn2en", "WorS", "comment"]
-
