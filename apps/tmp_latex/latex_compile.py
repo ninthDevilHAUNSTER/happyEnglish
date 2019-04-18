@@ -1,14 +1,15 @@
 from tmp_latex.latex_word_list_config import *
 from tmp_latex.latex_answer_list_config import SENTENCE_ANSWER_MIDDLE_WARE, WORD_ANSWER_MIDDLE_WARE, \
     WORD_ANSWER_MIDDLE_WARE_SINGLE_CASE, PDF_LATEX_COMPILE_CMD_ANSWER, HEADER_ANSWER
+from tmp_latex.latex_config import latex_header_gen
 import os
 from datetime import datetime
 import shutil
 from happyEnglish import settings
 
 
-def compile_answers(words, sentences):
-    latex = HEADER_ANSWER
+def compile_answers(words, sentences, user="匿名"):
+    latex = latex_header_gen(title="每日单词答案", user_name=user)
     if words.__len__() > 0:
         latex += WORD_START
 
@@ -37,8 +38,8 @@ def compile_answers(words, sentences):
     return f_name
 
 
-def compile_words(words, sentences):
-    latex = HEADER
+def compile_words(words, sentences, user="匿名"):
+    latex = latex_header_gen(title="每日单词", user_name=user)
     if words.__len__() > 0:
         latex += WORD_START
 

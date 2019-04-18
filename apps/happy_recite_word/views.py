@@ -175,8 +175,8 @@ def gen_words_list(request, id):
     shuffle(t_words)
     shuffle(t_sentences)
 
-    f_name = compile_words(t_words, t_sentences)
-    a_name = compile_answers(t_words, t_sentences)
+    f_name = compile_words(t_words, t_sentences, user=request.user.nickname.__str__())
+    a_name = compile_answers(t_words, t_sentences, user=request.user.nickname.__str__())
 
     e.update(pdf_file="pdfs\\" + f_name)
     e.update(ans_file="pdfs\\" + a_name)
