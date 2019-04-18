@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}
+    收藏单词
+{% endblock %}
+
+{% block content %}
+    <script>
+        function enshrine(data) {
+            $.ajax({
+                url: "/enshrine_word/",
+                data: {'id': data.id},
+                success: function (data) {
+                    {#alert(data["info"]);#}
+                    if (data["info"] === "success") {
+                        {#alert(data["info"]);#}
+                    } else if (data["info"] === "fail") {
+                        alert("what are u doing")
+                    }
+                }
+            })
+        }
+
+        function horn(data) {
+            console.log("this function is not finished")
+        }
+    </script>
+
+    {#    <audio controls>#}
+    {#        <source id="source" src="" type="audio/mpeg">#}
+    {#        Your browser does not support the audio element.#}
+    {#    </audio>#}
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>中文</th>
+            <th>英文</th>
+            <th>收藏次数</th>
+            <th>发音</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for word in words %}
+            <tr>
+                <td>
+                    <button type="button" class="btn btn-outline-info  text-dark" data-toggle="popover"
+                            data-trigger="focus"
+                            title=""
+                            data-content="{{ word.comment }}"
+                            data-original-title="备注">{{ word.cn }}
+                    </button>
+                    <script>
+                        $(document).ready(function () {
+                            $('[data-toggle="popover"]').popover();
+                        }); </script>
+                </td>
+
+                <td>
+                    <button type="button" class="btn btn-outline-light text-dark active">{{ word.en }}</button>
+                </td>
+                <td><a id="enshrine_time_{{ word.id }}">{{ word.enshrine_time }}</a>
+                    <button id="{{ word.id }}" class="icon-star"
+                            style="color: darkorange;border: none;background-color: white;"
+                            onclick="enshrine(this)"></button>
+                </td>
+                <td>
+                    <button id="horn_{{ word.id }}" class="icon-bullhorn" onclick="horn(this)">
+                    </button>
+                </td>
+                {#                <td>{{ word.recite_count }}</td>#}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

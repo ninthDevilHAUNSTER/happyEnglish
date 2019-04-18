@@ -9,23 +9,26 @@ from xadmin.plugins import xversion
 xversion.register_models()
 
 from happy_recite_word.views import index, word_import, word_output, gen_words_list, word_management, \
-    del_excel_file, view_excel, enshrine_word, output_ans
+    del_excel_file, view_excel, enshrine_word, output_ans, show_enshrined, get_word_voice
 from users.views import login, logout, register, user_info, page_not_found, bad_request
 from django.conf.urls.static import static
 from happyEnglish import settings
 
 urlpatterns = [
                   path('admin/', xadmin.site.urls, name="admin"),
+
                   path('', index, name="home"),
                   path('import/', word_import, name="import"),
                   path('management/', word_management, name="management"),
-                  path('enshrine_word/', enshrine_word, name='enshrine_word'),
+                  path('show_enshrined/', show_enshrined, name="show_enshrined"),
 
+                  path('api/enshrine_word/', enshrine_word, name='enshrine_word'),
                   path('api/ans_output/<int:id>', output_ans, name='ans_output'),
                   path('api/delete_excel/<int:id>', del_excel_file, name="delete_excel"),
                   path('api/view_excel/<int:id>', view_excel, name='view_excel'),
                   path('api/word_output/<int:id>', word_output, name="word_output"),
                   path('api/gen_words_list/<int:id>', gen_words_list, name='gen_words_list'),
+                  path('apt/get_word_voice/<slug:word>', get_word_voice, name="get_word_voice"),
 
                   path('user/login/', login, name="login"),
                   path('user/logout/', logout, name="logout"),

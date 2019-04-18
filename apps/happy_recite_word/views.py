@@ -23,25 +23,26 @@ def word_import(request):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             file = request.FILES['xl_file']
-            # use commit = False 来自定义user
             new_file = form.save(commit=False)
             new_file.name = file.name
             new_file.owner = request.user
             new_file.save()
-            id = ExcelStatus.objects.filter(name=file.name, owner=request.user)[0].id
+            e = ExcelStatus.objects.filter(name=file.name, owner=request.user)
+            if not e.exists():
+                return render_to_response('500.html', status=500)
             try:
-                success_or_fail, msg = handle_excel_file(id)
+                success_or_fail, msg = handle_excel_file(e[0].id)
                 if success_or_fail:
                     return render(request, 'happy_recite_word/import.html',
                                   {'form': form, 'success': True, 'msg': msg})
                 else:
-                    ExcelStatus.objects.filter(id=id).delete()
+                    ExcelStatus.objects.filter(id=e[0].id).delete()
                     return render(request, 'happy_recite_word/import.html',
                                   {'form': form, 'failure': True, 'msg': msg})
 
             except Exception or IndexError or ValueError as ex:
                 # print(ex.args)
-                ExcelStatus.objects.filter(id=id).delete()
+                ExcelStatus.objects.filter(id=e[0].id).delete()
                 return render(request, 'happy_recite_word/import.html',
                               {'form': form, 'failure': True, 'msg': ex.args.__str__()})
     else:
@@ -52,16 +53,20 @@ def word_import(request):
 @login_required
 def del_excel_file(request, id):
     if request.method == "GET" and id is not None:
+        e = ExcelStatus.objects.filter(id=id, owner=request.user)
+        if not e.exists():
+            return render_to_response('500.html', status=500)
         Words.objects.filter(file_source_id=id).delete()
-        ExcelStatus.objects.filter(id=id).delete()
+        e.delete()
         return HttpResponseRedirect(reverse('management'))
     else:
         return render_to_response('500.html', status=500)
 
+
 @login_required
 def view_excel(request, id):
     if request.method == "GET" and id is not None:
-        word_list = [i for i in Words.objects.filter(file_source_id=id)]
+        word_list = [i for i in Words.objects.filter(file_source_id=id, file_source__owner=request.user)]
         return render(request, 'happy_recite_word/view_excel.html', {
             'words': word_list
         })
@@ -71,7 +76,10 @@ def view_excel(request, id):
 
 @login_required
 def word_output(request, id):
-    e = ExcelStatus.objects.filter(id=id)[0]
+    e = ExcelStatus.objects.filter(id=id, owner=request.user)
+    if not e.exists():
+        return render_to_response('500.html', status=500)
+    e = e[0]
     if e.pdf_file.name == "None":
         return HttpResponseRedirect(reverse('management'))
     else:
@@ -85,7 +93,10 @@ def word_output(request, id):
 
 @login_required
 def output_ans(request, id):
-    e = ExcelStatus.objects.filter(id=id)[0]
+    e = ExcelStatus.objects.filter(id=id, owner=request.user)
+    if not e.exists():
+        return render_to_response('500.html', status=500)
+    e = e[0]
     if e.ans_file.name == "None":
         return HttpResponseRedirect(reverse('management'))
     else:
@@ -105,6 +116,7 @@ def enshrine_word(request):
     if request.GET['id'].isnumeric():
         id = int(request.GET['id'])
         try:
+            # 这里你想黑就黑吧，懒得理你
             w = Words.objects.filter(id=id)
             w.update(enshrine_time=w[0].enshrine_time + 1)
             return HttpResponse(json.dumps(
@@ -122,7 +134,7 @@ def enshrine_word(request):
 
 @login_required
 def gen_words_list(request, id):
-    e = ExcelStatus.objects.filter(id=id)
+    e = ExcelStatus.objects.filter(id=id, owner=request.user)
     if e.__len__() == 0:
         return render_to_response('500.html', status=500)
 
@@ -184,6 +196,28 @@ def word_management(request):
     page = request.GET.get('page')
     files = paginator.get_page(page)
     return render(request, 'happy_recite_word/management.html', {'files': files})
+
+
+@login_required
+def show_enshrined(request):
+    if request.method == "GET":
+        word_list = [i for i in Words.objects.filter(enshrine_time__gte=1, file_source__owner=request.user).order_by(
+            'enshrine_time')]
+        return render(request, 'happy_recite_word/enshrined_word.html', {
+            'words': word_list
+        })
+    else:
+        return render_to_response('500.html', status=500)
+
+
+@login_required
+def get_word_voice(request, word):
+    print(word)
+    response = HttpResponse(mimetype='audio/mpeg')
+    response['Content-Disposition'] = 'attachment; filename=TODO'
+    response['Accept-Ranges'] = 'bytes'
+    response['X-Sendfile'] = "TODO"
+    return response
 
 
 def index(request):

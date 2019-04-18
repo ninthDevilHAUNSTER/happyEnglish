@@ -28,7 +28,7 @@ SECRET_KEY = 'z5s7yg3e^2e5ootptqfj-_)ldqpcnu=$q2tk4xiqum5$@6y(*e'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'users.UserProfile'
 
@@ -41,17 +41,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'users.apps.UsersConfig',
     'happy_recite_word.apps.HappyReciteWordConfig',
     'xadmin',
     'crispy_forms',
     'reversion',
-    'bootstrap4'
+    'bootstrap4',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -59,7 +61,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ALLOW_CREDENTIALS = False
+
 ROOT_URLCONF = 'happyEnglish.urls'
+
+CORS_ORIGIN_WHITELIST = (
+    'shaobaobaoer.cn'  # 方便以后搞事情用
+    'localhost:8000',
+    '127.0.0.1:9000'
+)
 
 TEMPLATES = [
     {
