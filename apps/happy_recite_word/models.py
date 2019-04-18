@@ -51,9 +51,9 @@ class Words(models.Model):
         (1, "Word"),
         (2, "Sentence")
     )
-    en = models.CharField(max_length=200, null=False, blank=False, default=" ", verbose_name="英语",
+    en = models.CharField(max_length=400, null=False, blank=False, default=" ", verbose_name="英语",
                           help_text="en : 请在此输入英文")
-    cn = models.CharField(max_length=200, null=False, blank=False, default=" ", verbose_name="中文",
+    cn = models.CharField(max_length=400, null=False, blank=False, default=" ", verbose_name="中文",
                           help_text="cn : 请在此输入中文")
     comment = models.TextField(max_length=255, null=False, default=" ", verbose_name="备注",
                                help_text="comment : 请在此输入备注")

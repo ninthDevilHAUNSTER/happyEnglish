@@ -18,7 +18,6 @@ import os
 
 import xlrd
 from datetime import datetime
-import time
 from happyEnglish.settings import MEDIA_ROOT
 
 
@@ -67,7 +66,6 @@ def handle_excel_file(id):
                 return False, "EXCEL 头行参数不正确"
             for row_id in range(1, xlsx.nrows):
                 row_value = xlsx.row_values(row_id)[0:5]
-                print(row_value)
                 Words.objects.update_or_create(
                     file_source=excel,
                     en=row_value[0],
@@ -83,7 +81,6 @@ def handle_excel_file(id):
 
     elif file_relative_path.endswith('csv'):
         with open(MEDIA_ROOT + "\\" + file_relative_path, 'r', encoding='utf8') as f:
-            # csv_file = csv.DictReader(f)
             csv_file = csv.reader(f)
             for row_value in csv_file:
                 if csv_file.line_num == 1:
