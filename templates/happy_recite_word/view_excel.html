@@ -5,7 +5,7 @@
     <script>
         function enshrine(data) {
             $.ajax({
-                url: "/enshrine_word/",
+                url: "/api/enshrine_word/",
                 data: {'id': data.id},
                 success: function (data) {
                     {#alert(data["info"]);#}
@@ -53,10 +53,8 @@
                             onclick="enshrine(this)"></button>
                 </td>
                 <td>{{ word.recite_count }}</td>
-
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
 {% endblock %}
