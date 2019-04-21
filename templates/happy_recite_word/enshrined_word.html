@@ -2,6 +2,12 @@
 {% block title %}
     收藏单词
 {% endblock %}
+{% block js_and_css_loader %}
+    <script src="/static/js/moment.min.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap-datetimepicker.min.css">
+    <script src="/static/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/static/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+{% endblock %}
 
 {% block content %}
     <script>
@@ -37,24 +43,42 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="recipient-name" class="col-form-label">Recipient:</label>
-                            <input type="text" class="form-control" id="recipient-name">
-                        </div>
-                        <div class="form-group">
-                            <label for="message-text" class="col-form-label">Message:</label>
-                            <textarea class="form-control" id="message-text"></textarea>
-                        </div>
+                    <form method="post" id="word_output_form">
+                        {% csrf_token %}
+                        {% for filed in form %}
+                            <div class="form-group">
+                                <label>{{ filed.label }}</label>
+                                {{ filed }}
+                            </div>
+                            <p class="text-danger">{{ filed.errors.as_text }}</p>
+                        {% endfor %}
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Send message</button>
+                    <button type="button" class="btn btn-primary odom-submit">Send message</button>
                 </div>
+                <script>
+                    $(function () {
+                        $('body').on('click', '.odom-submit', function (e) {
+                            $('#word_output_form').submit();
+                            {#$('#exampleModal').modal('hide');#}
+                        });
+                    });
+                </script>
             </div>
         </div>
     </div>
+
+
+    <script type="text/javascript">
+        $(function () {
+            $('#datetimepicker2').datetimepicker({
+                language: 'en',
+                pick12HourFormat: true
+            });
+        });
+    </script>
     {#    <audio controls>#}
     {#        <source id="source" src="" type="audio/mpeg">#}
     {#        Your browser does not support the audio element.#}
@@ -68,12 +92,13 @@
                 &nbsp;
             </div>
             <div class="col-2">
-                <button class="btn btn-outline-success" data-toggle="modal" data-target="#exampleModal">自定义单词表
+                <button class="btn btn-outline-success" data-toggle="modal" data-target="#exampleModal">删选单词
                 </button>
             </div>
         </div>
     </div>
     <br>
+
 
     <table class="table">
         <thead>
@@ -81,7 +106,7 @@
             <th>中文</th>
             <th>英文</th>
             <th>收藏次数</th>
-            <th>背诵时间</th>
+            <th>添加时间</th>
         </tr>
         </thead>
         <tbody>
@@ -109,9 +134,7 @@
                             onclick="enshrine(this)"></button>
                 </td>
                 <td>
-                    {{ word.recite_time }}
-                    {#                    <button id="horn_{{ word.id }}" class="icon-bullhorn" onclick="horn(this)">#}
-                    {#                    </button>#}
+                    {{ word.add_time }}
                 </td>
                 {#                <td>{{ word.recite_count }}</td>#}
             </tr>

@@ -2,14 +2,14 @@ from django.shortcuts import render, render_to_response
 from django.shortcuts import HttpResponseRedirect, HttpResponse
 from django.http import HttpResponseBadRequest, FileResponse
 from datetime import datetime, timedelta
-from .forms import UploadFileForm
+from .forms import UploadFileForm, EnshrinedWordFilterForm
 from happyEnglish.settings import MEDIA_ROOT
 from .models import ExcelStatus, Words
 from db_tools.words_input import handle_excel_file
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, F
-from tmp_latex.latex_compile import compile_answers, compile_words
+from tmp_latex.latex_compile import answer_sheet_compiler, dictation_paper_compiler
 from django.views.decorators.csrf import csrf_exempt
 import os
 from random import randint, shuffle
@@ -172,11 +172,12 @@ def gen_words_list(request, id):
             t_sentences.append((sentence.cn, sentence.en))
         elif sentence.cn2en == 2:
             t_sentences.append((sentence.en, sentence.en))
+
     shuffle(t_words)
     shuffle(t_sentences)
 
-    f_name = compile_words(t_words, t_sentences, user=request.user.nickname.__str__())
-    a_name = compile_answers(t_words, t_sentences, user=request.user.nickname.__str__())
+    f_name = dictation_paper_compiler(t_words, t_sentences, user=request.user.nickname.__str__())
+    a_name = answer_sheet_compiler(t_words, t_sentences, user=request.user.nickname.__str__())
 
     e.update(pdf_file="pdfs\\" + f_name)
     e.update(ans_file="pdfs\\" + a_name)
@@ -201,10 +202,34 @@ def word_management(request):
 @login_required
 def show_enshrined(request):
     if request.method == "GET":
+        form = EnshrinedWordFilterForm()
         word_list = [i for i in Words.objects.filter(enshrine_time__gte=1, file_source__owner=request.user).order_by(
             'enshrine_time')]
         return render(request, 'happy_recite_word/enshrined_word.html', {
-            'words': word_list
+            'words': word_list,
+            'form': form
+        })
+    elif request.method == "POST":
+        form = EnshrinedWordFilterForm(data=request.POST)
+        if form.is_valid():
+            start_time = form.cleaned_data['start_time']
+            end_time = form.cleaned_data['end_time']
+            least_enshrined_time = form.cleaned_data['least_enshrined_time']
+            word_list = [i for i in
+                         Words.objects.filter(
+                             Q(enshrine_time__gte=least_enshrined_time, file_source__owner=request.user)
+                             & Q(add_time__gte=start_time) & Q(add_time__lte=end_time))]
+            return render(request, 'happy_recite_word/enshrined_word.html', {
+                'words': word_list,
+                'form': form
+            })
+        else:
+            word_list = [i for i in
+                         Words.objects.filter(enshrine_time__gte=1, file_source__owner=request.user).order_by(
+                             'enshrine_time')]
+        return render(request, 'happy_recite_word/enshrined_word.html', {
+            'words': word_list,
+            'form': form
         })
     else:
         return render_to_response('500.html', status=500)
