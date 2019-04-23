@@ -36,3 +36,13 @@ mysql 5.6
 ### 配置 相关
 
 推荐使用chrome PDF.js 插件。快乐背单词，从今天开始！
+
+### 部署相关
+
+```markdown
+pip install django==2.0.12
+pip install django-cors-headers
+pip install https://codeload.github.com/sshwsfc/xadmin/zip/django2
+pip install django-bootstrap4
+```
+

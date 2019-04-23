@@ -41,6 +41,8 @@ class EnshrinedWordFilterForm(forms.Form):
     def clean(self):
         if self.cleaned_data["end_time"] < self.cleaned_data["start_time"]:
             raise forms.ValidationError("请确认时间正确性")
+        self.cleaned_data["start_time"] + timedelta(minutes=3)  # 我感觉我数据库的时间好像和djang的时间不太同步，所以都加了3分钟
+        self.cleaned_data["end_time"] + timedelta(minutes=3)  # 我感觉我数据库的时间好像和djang的时间不太同步，所以都加了3分钟
         # try:
         #     datetime.strptime(self.cleaned_data["start_time"], '%Y-%m-%d %H:%M:%S')
         #     datetime.strptime(self.cleaned_data["end_time"], '%Y-%m-%d %H:%M:%S')

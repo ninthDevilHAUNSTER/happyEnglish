@@ -66,7 +66,7 @@ def del_excel_file(request, id):
 @login_required
 def view_excel(request, id):
     if request.method == "GET" and id is not None:
-        word_list = [i for i in Words.objects.filter(file_source_id=id, file_source__owner=request.user)]
+        word_list = Words.objects.filter(file_source_id=id, file_source__owner=request.user)
         return render(request, 'happy_recite_word/view_excel.html', {
             'words': word_list
         })
@@ -203,8 +203,12 @@ def word_management(request):
 def show_enshrined(request):
     if request.method == "GET":
         form = EnshrinedWordFilterForm()
-        word_list = [i for i in Words.objects.filter(enshrine_time__gte=1, file_source__owner=request.user).order_by(
-            'enshrine_time')]
+        word_list = Words.objects.filter(enshrine_time__gte=1, file_source__owner=request.user).order_by(
+            'enshrine_time')
+        paginator = Paginator(word_list, 20)
+        page = request.GET.get('page')
+        word_list = paginator.get_page(page)
+
         return render(request, 'happy_recite_word/enshrined_word.html', {
             'words': word_list,
             'form': form
@@ -215,10 +219,13 @@ def show_enshrined(request):
             start_time = form.cleaned_data['start_time']
             end_time = form.cleaned_data['end_time']
             least_enshrined_time = form.cleaned_data['least_enshrined_time']
-            word_list = [i for i in
-                         Words.objects.filter(
-                             Q(enshrine_time__gte=least_enshrined_time, file_source__owner=request.user)
-                             & Q(add_time__gte=start_time) & Q(add_time__lte=end_time))]
+            # print(start_time,end_time,least_enshrined_time)
+            word_list = Words.objects.filter(
+                Q(enshrine_time__gte=least_enshrined_time, file_source__owner=request.user)
+                & Q(add_time__gte=start_time) & Q(add_time__lte=end_time)).order_by('enshrine_time')
+            paginator = Paginator(word_list, 20)
+            page = request.GET.get('page')
+            word_list = paginator.get_page(page)
             return render(request, 'happy_recite_word/enshrined_word.html', {
                 'words': word_list,
                 'form': form

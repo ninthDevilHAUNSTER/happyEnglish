@@ -12,45 +12,13 @@ import django
 
 django.setup()
 
-from happyEnglish.settings import WORDS_ROOT, EXCEL_START_ROW_TITLE
+from happyEnglish.settings import EXCEL_START_ROW_TITLE
 from happy_recite_word.models import Words, ExcelStatus
 import os
 
 import xlrd
 from datetime import datetime
 from happyEnglish.settings import MEDIA_ROOT
-
-
-def import_excel():
-    for root, dirs, files in os.walk(WORDS_ROOT):
-        for file in files:
-            if file.endswith(".xlsx") and not file.startswith("~"):
-                file_path = root + file
-                ExcelStatus.objects.update_or_create(
-                    xl_name=file,
-                    xl_path=file_path,
-                    mod_time=datetime.fromtimestamp(os.stat(file_path).st_mtime),  # 文件的修改时间
-                    add_time=datetime.fromtimestamp(os.stat(file_path).st_ctime)  # 文件的创建时间
-                )
-
-
-def import_data():
-    for excel in ExcelStatus.objects.all():
-        xl_path = excel.xl_path
-        sheet = xlrd.open_workbook(xl_path).sheet_by_index(0)
-        if sheet.nrows > 1:
-            if sheet.row_values(0)[0:4] == EXCEL_START_ROW_TITLE:
-                for row_id in range(1, sheet.nrows):
-                    row_value = sheet.row_values(row_id)[0:4]
-                    Words.objects.update_or_create(
-                        file_source=excel,
-                        en_word=row_value[0],
-                        en_verse=row_value[1],
-                        cn_word=row_value[2],
-                        comment=row_value[3]
-                    )
-
-
 import csv
 
 

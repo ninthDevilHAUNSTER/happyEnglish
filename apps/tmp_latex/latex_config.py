@@ -144,7 +144,7 @@ def compile_cmd(file_name):
             "1>/dev/null 2>/dev/null &"])
     elif "win" in os.sys.platform:
         return "".join(i + " " for i in [
-            "xelatex",
+            "pdflatex",
             # "-interaction=batchmode",
             # "-halt-on-error",
             file_name,

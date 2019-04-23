@@ -12,7 +12,7 @@
     <br><br>
     {% if request.user.is_authenticated %}
         <div class="jumbotron jumbotron-fluid" id="Bootstrap Jumbotron" style="background-color: #e3f2fd;">
-            <h1 align="center"> {{ request.user }} 今天背单词了嚒</h1>
+            <h1 align="center"> {{ request.user.nickname }} 今天背单词了嚒</h1>
             {% if beilema %}
                 <h2 align="center">背啦！</h2>
             {% else %}
