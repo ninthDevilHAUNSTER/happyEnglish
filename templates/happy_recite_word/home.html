@@ -3,12 +3,6 @@
 {% bootstrap_css %}
 {% block title %} Home {% endblock %}
 {% block content %}
-    {#    <form action="{% url 'home' %}" method="post">#}
-    {#        {% csrf_token %}#}
-    {#        <input type="text" placeholder="文件名称，时间" name="condition">#}
-    {#        <button type="submit" class=""> 查找</button>#}
-    {#    </form>#}
-    {#    <hr/>#}
     <br><br>
     {% if request.user.is_authenticated %}
         <div class="jumbotron jumbotron-fluid" id="Bootstrap Jumbotron" style="background-color: #e3f2fd;">

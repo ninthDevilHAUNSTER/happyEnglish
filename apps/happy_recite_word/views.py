@@ -192,8 +192,8 @@ def gen_words_list(request, id):
 
 @login_required
 def word_management(request):
-    full_files = ExcelStatus.objects.filter(owner=request.user).order_by('id')
-    paginator = Paginator(full_files, 5)
+    full_files = ExcelStatus.objects.filter(owner=request.user).order_by('-id')
+    paginator = Paginator(full_files, 10)
     page = request.GET.get('page')
     files = paginator.get_page(page)
     return render(request, 'happy_recite_word/management.html', {'files': files})

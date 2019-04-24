@@ -53,7 +53,7 @@ LATEX_WRITER_DICT = {
     "WORD_PART_SINGLE_COLUMN_WITH_ANSWER": """
 \\begin{multicols}{2}
 \\begin{flushleft}
-%s.\ %s \ \ \ \ \\underline{\hspace{3cm}}
+%s.\ %s \ %s
 \\end{flushleft}
 \\end{multicols}
 """,
