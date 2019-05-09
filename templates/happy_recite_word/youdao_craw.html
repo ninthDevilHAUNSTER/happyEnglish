@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% block title %} youdao  {% endblock %}
+{% block content %}
+
+    <form method="post" action="#">
+        {% csrf_token %}
+        {% for filed in form %}
+            {# 去掉冒号 #}
+            <label>输入信息&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small style="color: grey">以回车分隔</small></label>
+            {{ filed }}
+            {# 显示对应字段的错误信息 #}
+            <p class="text-danger">{{ filed.errors.as_text }}</p>
+        {% endfor %}
+        {# 在最底部显示错误信息 #}
+        <span class="pull-left text-danger">{{ register_form.non_field_errors }}</span>
+        <input type="submit" class="btn btn-primary pull-right" value="提交">
+    </form>
+
+    <br>
+    <br>
+
+    <label for="name">爬虫信息</label>
+    <textarea class="form-control" rows="3">{{ result }}</textarea>
+{% endblock %}
+

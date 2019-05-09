@@ -2,7 +2,7 @@ from django.shortcuts import render, render_to_response
 from django.shortcuts import HttpResponseRedirect, HttpResponse
 from django.http import HttpResponseBadRequest, FileResponse
 from datetime import datetime, timedelta
-from .forms import UploadFileForm, EnshrinedWordFilterForm
+from .forms import UploadFileForm, EnshrinedWordFilterForm, WordWriterForm
 from happyEnglish.settings import MEDIA_ROOT
 from .models import ExcelStatus, Words
 from db_tools.words_input import handle_excel_file
@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, F
 from tmp_latex.latex_compile import answer_sheet_compiler, dictation_paper_compiler
+from tmp_latex.youdao_craw import gen_words
 from django.views.decorators.csrf import csrf_exempt
 import os
 from random import randint, shuffle
@@ -250,6 +251,25 @@ def get_word_voice(request, word):
     response['Accept-Ranges'] = 'bytes'
     response['X-Sendfile'] = "TODO"
     return response
+
+
+@login_required
+@csrf_exempt
+def youdao_word_translator(request):
+    result_content = ""
+    if request.method == 'POST':
+        form = WordWriterForm(data=request.POST)
+        if form.is_valid():
+            print(form.cleaned_data['text_input'])
+            result_content = gen_words(
+                words=form.cleaned_data['text_input'].split('\n')
+            )
+    else:
+        form = WordWriterForm()
+    return render_to_response('happy_recite_word/youdao_craw.html', {
+        'form': form,
+        'result': result_content
+    })
 
 
 def index(request):

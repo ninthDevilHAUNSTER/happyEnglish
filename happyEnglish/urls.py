@@ -9,7 +9,8 @@ from xadmin.plugins import xversion
 xversion.register_models()
 
 from happy_recite_word.views import index, word_import, word_output, gen_words_list, word_management, \
-    del_excel_file, view_excel, enshrine_word, output_ans, show_enshrined, get_word_voice
+    del_excel_file, view_excel, enshrine_word, output_ans, show_enshrined, get_word_voice, \
+    youdao_word_translator
 from users.views import login, logout, register, user_info, page_not_found, bad_request
 from django.conf.urls.static import static
 from happyEnglish import settings
@@ -21,6 +22,7 @@ urlpatterns = [
                   path('import/', word_import, name="import"),
                   path('management/', word_management, name="management"),
                   path('show_enshrined/', show_enshrined, name="show_enshrined"),
+                  path('youdao_word_translator/', youdao_word_translator, name="youdao_word_translator"),
 
                   path('api/enshrine_word/', enshrine_word, name='enshrine_word'),
                   path('api/ans_output/<int:id>', output_ans, name='ans_output'),

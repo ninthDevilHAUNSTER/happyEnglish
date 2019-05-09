@@ -1,4 +1,5 @@
 from django import forms
+from tmp_latex.youdao_craw import gen_words
 
 
 class WordUpdateFrom(forms.Form):
@@ -49,3 +50,23 @@ class EnshrinedWordFilterForm(forms.Form):
         # except ValueError:
         #     raise forms.ValidationError("请输入正确的时间格式： YYYY-MM-DD HH:MM:SS")
         return self.cleaned_data
+
+
+class WordWriterForm(forms.Form):
+    text_input = forms.CharField(required=True,
+                                 initial="请输入内容，以回车代表每个单词的分隔",
+                                 widget=forms.Textarea(
+                                     attrs={'class': 'form-control'},
+                                 ),
+                                 help_text="请输入内容，以回车代表每个单词的分隔", )
+    #
+    # text_output = forms.CharField(required=False,
+    #                               initial=" ",
+    #                               widget=forms.TextInput(
+    #                                   attrs={'class': 'form-control', 'disabled': 'False'},
+    #                               ))
+
+    # def clean(self):
+    #     self.cleaned_data['text_output'] = gen_words(words=
+    #                                                  self.cleaned_data['text_input'].split('\n'))
+    #     return self.cleaned_data
